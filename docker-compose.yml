@@ -1,0 +1,158 @@
+version: '3.3'
+services:
+
+  delugevpn:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.10
+        aliases:
+          - delugevpn
+    ports:
+      - '8112:8112'
+      - '8118:8118'
+      - '58846:58846'
+      - '58946:58946'
+      - '8888:8888/tcp'
+      - '8388:8388/udp'
+      - '8000:8000/tcp'
+    container_name: delugevpn
+    volumes:
+      - '/opt/docker/downloads:/downloads'
+      - '/opt/docker/config/deluge:/config'
+      - '/etc/localtime:/etc/localtime:ro'
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=x6920908
+      - VPN_PASS=pUgjTruKvg
+      - VPN_PROV=pia
+      - STRICT_PORT_FORWARD=no
+      - ENABLE_PRIVOXY=yes
+      - LAN_NETWORK=10.0.0.0/8
+      - >-
+        NAME_SERVERS=209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177
+      - DELUGE_DAEMON_LOG_LEVEL=info
+      - DELUGE_WEB_LOG_LEVEL=info
+      - ADDITIONAL_PORTS=1234
+      - DEBUG=false
+      - UMASK=022
+      - PUID=1000
+      - PGID=1000
+    image: binhex/arch-delugevpn
+    restart: unless-stopped
+
+  sonarr:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.20
+        aliases:
+          - sonarr
+    image: mdhiggins/sonarr-sma
+    container_name: sonarr
+    volumes:
+      - '/opt/docker/config/sonarr:/config'
+      - '/opt/docker/sma:/usr/local/sma/config'
+      - '/opt/docker/media/tvshows:/tv'
+      - '/opt/docker/downloads:/downloads'
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    depends_on:
+      - delugevpn
+    ports:
+      - '8989:8989'
+
+  jackett:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.30
+        aliases:
+          - jackett
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - AUTO_UPDATE=true
+    volumes:
+      - '/opt/docker/config/jackett:/config'
+      - '/opt/docker/downloads:/downloads'
+    ports:
+      - '9117:9117'
+    restart: unless-stopped
+    image: linuxserver/jackett
+
+  radarr:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.40
+        aliases:
+          - radarr
+    image: mdhiggins/radarr-sma
+    container_name: radarr
+    volumes:
+      - '/opt/docker/config/radarr:/config'
+      - '/opt/docker/sma:/usr/local/sma/config'
+      - '/opt/docker/media/movies:/movies'
+      - '/opt/docker/downloads:/downloads'
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - '7878:7878'
+
+  plex:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.50
+        aliases:
+          - plex
+    container_name: plex
+    hostname: plex
+    ports:
+      - '32400:32400'
+    environment:
+      - TZ=America/Chicago
+      - PLEX_CLAIM=claim-By8WWAuZHfFjy7sNSsMh
+    volumes:
+      - '/opt/docker/config/plex:/config'
+      - '/opt/docker/config/plex/transcode:/transcode'
+      - '/opt/docker/media:/data'
+      #- '/mnt/easystore/kodi/TV Shows:/tv'
+      #- '/mnt/easystore/kodi/Movies:/movies'
+      #- '/mnt/easystore/kodi/Cancelled:/cancelled'
+      #- '/mnt/easystore/kodi/Old:/old'
+    image: plexinc/pms-docker
+    restart: unless-stopped
+
+  tautulli:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.60
+        aliases:
+          - tautulli
+    container_name: tautulli
+    volumes:
+      - '/opt/docker/config/plexpy:/config'
+      - >-
+        /opt/docker/config/plex/Library/Application Support/Plex Media
+        Server/Logs:/logs:ro
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=<timezone>
+    ports:
+      - '8181:8181'
+    image: linuxserver/tautulli
+    restart: unless-stopped
+
+networks:
+  kodi_server:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.2.0/24"
+
