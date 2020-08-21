@@ -17,8 +17,8 @@ services:
       - '8000:8000/tcp'
     container_name: delugevpn
     volumes:
-      - './media-center/docker/downloads:/downloads'
-      - './media-center/docker/config/deluge:/config'
+      - './docker/downloads:/downloads'
+      - './docker/config/deluge:/config'
       - '/etc/localtime:/etc/localtime:ro'
     cap_add:
       - NET_ADMIN
@@ -37,8 +37,8 @@ services:
       - ADDITIONAL_PORTS=1234
       - DEBUG=false
       - UMASK=022
-      - PUID=1000
-      - PGID=1000
+      - PUID=2000
+      - PGID=2000
     image: binhex/arch-delugevpn
     restart: unless-stopped
 
@@ -51,14 +51,14 @@ services:
     image: mdhiggins/sonarr-sma
     container_name: sonarr
     volumes:
-      - './media-center/docker/config/sonarr:/config'
-      - './media-center/docker/sma:/usr/local/sma/config'
-      - './media-center/docker/media/tvshows:/tv'
-      - './media-center/docker/downloads:/downloads'
+      - './docker/config/sonarr:/config'
+      - './docker/sma:/usr/local/sma/config'
+      - './docker/media/tvshows:/tv'
+      - './docker/downloads:/downloads'
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=2000
+      - PGID=2000
     depends_on:
       - delugevpn
     ports:
@@ -72,13 +72,13 @@ services:
           - jackett
     container_name: jackett
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=2000
+      - PGID=2000
       - TZ=America/Chicago
       - AUTO_UPDATE=true
     volumes:
-      - './media-center/docker/config/jackett:/config'
-      - './media-center/docker/downloads:/downloads'
+      - './docker/config/jackett:/config'
+      - './docker/downloads:/downloads'
     ports:
       - '9117:9117'
     restart: unless-stopped
@@ -93,14 +93,14 @@ services:
     image: mdhiggins/radarr-sma
     container_name: radarr
     volumes:
-      - './media-center/docker/config/radarr:/config'
-      - './media-center/docker/sma:/usr/local/sma/config'
-      - './media-center/docker/media/movies:/movies'
-      - './media-center/docker/downloads:/downloads'
+      - './docker/config/radarr:/config'
+      - './docker/sma:/usr/local/sma/config'
+      - './docker/media/movies:/movies'
+      - './docker/downloads:/downloads'
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=2000
+      - PGID=2000
     ports:
       - '7878:7878'
 
@@ -118,9 +118,9 @@ services:
       - TZ=America/Chicago
       - PLEX_CLAIM=claim-By8WWAuZHfFjy7sNSsMh
     volumes:
-      - './media-center/docker/config/plex:/config'
-      - './media-center/docker/config/plex/transcode:/transcode'
-      - './media-center/docker/media:/data'
+      - './docker/config/plex:/config'
+      - './docker/config/plex/transcode:/transcode'
+      - './docker/media:/data'
       #- '/mnt/easystore/kodi/TV Shows:/tv'
       #- '/mnt/easystore/kodi/Movies:/movies'
       #- '/mnt/easystore/kodi/Cancelled:/cancelled'
@@ -136,13 +136,13 @@ services:
           - tautulli
     container_name: tautulli
     volumes:
-      - './media-center/docker/config/plexpy:/config'
+      - './docker/config/plexpy:/config'
       - >-
-        ./media-center/docker/config/plex/Library/Application Support/Plex Media
+        ./docker/config/plex/Library/Application Support/Plex Media
         Server/Logs:/logs:ro
     environment:
-      - PGID=1000
-      - PUID=1000
+      - PGID=2000
+      - PUID=2000
       - TZ=<timezone>
     ports:
       - '8181:8181'
