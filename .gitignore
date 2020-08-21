@@ -4,6 +4,7 @@ downloads
 MediaCover
 cache
 Library
+state
 
 *.torrent
 *.bak
