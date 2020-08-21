@@ -17,8 +17,8 @@ services:
       - '8000:8000/tcp'
     container_name: delugevpn
     volumes:
-      - '/opt/docker/downloads:/downloads'
-      - '/opt/docker/config/deluge:/config'
+      - './media-center/docker/downloads:/downloads'
+      - './media-center/docker/config/deluge:/config'
       - '/etc/localtime:/etc/localtime:ro'
     cap_add:
       - NET_ADMIN
@@ -51,10 +51,10 @@ services:
     image: mdhiggins/sonarr-sma
     container_name: sonarr
     volumes:
-      - '/opt/docker/config/sonarr:/config'
-      - '/opt/docker/sma:/usr/local/sma/config'
-      - '/opt/docker/media/tvshows:/tv'
-      - '/opt/docker/downloads:/downloads'
+      - './media-center/docker/config/sonarr:/config'
+      - './media-center/docker/sma:/usr/local/sma/config'
+      - './media-center/docker/media/tvshows:/tv'
+      - './media-center/docker/downloads:/downloads'
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -77,8 +77,8 @@ services:
       - TZ=America/Chicago
       - AUTO_UPDATE=true
     volumes:
-      - '/opt/docker/config/jackett:/config'
-      - '/opt/docker/downloads:/downloads'
+      - './media-center/docker/config/jackett:/config'
+      - './media-center/docker/downloads:/downloads'
     ports:
       - '9117:9117'
     restart: unless-stopped
@@ -93,10 +93,10 @@ services:
     image: mdhiggins/radarr-sma
     container_name: radarr
     volumes:
-      - '/opt/docker/config/radarr:/config'
-      - '/opt/docker/sma:/usr/local/sma/config'
-      - '/opt/docker/media/movies:/movies'
-      - '/opt/docker/downloads:/downloads'
+      - './media-center/docker/config/radarr:/config'
+      - './media-center/docker/sma:/usr/local/sma/config'
+      - './media-center/docker/media/movies:/movies'
+      - './media-center/docker/downloads:/downloads'
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -118,9 +118,9 @@ services:
       - TZ=America/Chicago
       - PLEX_CLAIM=claim-By8WWAuZHfFjy7sNSsMh
     volumes:
-      - '/opt/docker/config/plex:/config'
-      - '/opt/docker/config/plex/transcode:/transcode'
-      - '/opt/docker/media:/data'
+      - './media-center/docker/config/plex:/config'
+      - './media-center/docker/config/plex/transcode:/transcode'
+      - './media-center/docker/media:/data'
       #- '/mnt/easystore/kodi/TV Shows:/tv'
       #- '/mnt/easystore/kodi/Movies:/movies'
       #- '/mnt/easystore/kodi/Cancelled:/cancelled'
@@ -136,9 +136,9 @@ services:
           - tautulli
     container_name: tautulli
     volumes:
-      - '/opt/docker/config/plexpy:/config'
+      - './media-center/docker/config/plexpy:/config'
       - >-
-        /opt/docker/config/plex/Library/Application Support/Plex Media
+        ./media-center/docker/config/plex/Library/Application Support/Plex Media
         Server/Logs:/logs:ro
     environment:
       - PGID=1000
