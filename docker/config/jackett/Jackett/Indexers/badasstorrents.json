@@ -1,0 +1,30 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://badasstorrents.com/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "__cfduid=d6f9b529230d8982e4c3e45efc8c595df1597961108; PHPSESSID=2kn9lvsr22012lcefhep6c9rva"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": "Found no results while trying to browse this tracker"
+  },
+  {
+    "id": "downloadlink",
+    "type": "inputselect",
+    "name": "Download link",
+    "value": "magnet:?xt=",
+    "options": {
+      "/download/": ".torrent",
+      "magnet:?xt=": "magnet"
+    }
+  }
+]

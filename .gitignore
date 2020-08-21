@@ -1,0 +1,16 @@
+tribute
+media
+downloads
+MediaCover
+cache
+Library
+
+*.torrent
+*.bak
+*.txt
+state-*
+*.pid
+*.lock
+*.log
+*.mkv
+*.mp4
