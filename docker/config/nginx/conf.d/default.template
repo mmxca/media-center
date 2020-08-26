@@ -1,0 +1,66 @@
+server {
+  listen ${NGINX_LISTEN_PORT} default_server;
+  listen [::]:${NGINX_LISTEN_PORT} default_server;
+
+  # Everything is a 404
+  location / {
+    root /var/lib/nginx/html/;
+  }
+
+  # You may need this to prevent return 404 recursion.
+  location = /404.html {
+    internal;
+  }
+
+  location /deluge {
+    proxy_pass http://delugevpn:${DELUGEVPN_LISTEN_PORT}/;
+    proxy_set_header X-Deluge-Base "/deluge/";
+    add_header X-Frame-Options SAMEORIGIN;
+  }  
+
+  location /sonarr {
+    proxy_pass        http://sonarr:${SONARR_LISTEN_PORT}/sonarr;
+    proxy_set_header  Host sonarr;
+    proxy_set_header  X-Real-IP $remote_addr;
+    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+  }
+
+  location /radarr {
+    proxy_pass        http://radarr:${RADARR_LISTEN_PORT}/radarr;
+    proxy_set_header  Host radarr;
+    proxy_set_header  X-Real-IP $remote_addr;
+    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+  }
+
+location /web/ {
+    proxy_pass http://plex:${PLEX_LISTEN_PORT}/web/;
+    proxy_max_temp_file_size 0;
+}
+
+  location /jackett {
+    proxy_pass http://jackett:${JACKETT_LISTEN_PORT}/jackett/;
+  }
+
+  location /tautulli/ {
+    proxy_pass http://tautulli:${TAUTULLI_LISTEN_PORT}/tautulli/;
+  }
+
+#  location /nzbget {
+#    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT}/nzbget/;
+#  }
+
+#  location ~ ^/nzbget($|./*) {
+#    rewrite /nzbget/(.*) /$1 break;
+#    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT};
+#    proxy_set_header Host $host;
+#    proxy_set_header X-Real-IP $remote_addr;
+#    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#  }
+
+#  location ~ ^/nzbget$ {
+#    return 302 $scheme://$host$request_uri/;
+#  }
+
+}

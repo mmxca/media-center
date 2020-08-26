@@ -5,6 +5,7 @@ MediaCover
 cache
 Library
 state
+backups
 
 *.torrent
 *.bak
@@ -15,3 +16,5 @@ state-*
 *.log
 *.mkv
 *.mp4
+*.db
+*.db*
