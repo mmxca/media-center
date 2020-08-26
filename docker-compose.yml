@@ -149,6 +149,42 @@ services:
     image: linuxserver/tautulli
     restart: unless-stopped
 
+  nginx:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.70
+        aliases:
+          - nginx
+    container_name: ngingx
+    depends_on:
+      - delugevpn
+      - sonarr
+      - jackett
+      - radarr
+      - plex
+      - tautulli
+        #      - nzbget
+    environment:
+      - NGINX_LISTEN_PORT=65456
+      - DELUGEVPN_LISTEN_PORT=8112
+      - SONARR_LISTEN_PORT=8989
+      - JACKETT_LISTEN_PORT=9117
+      - RADARR_LISTEN_PORT=7878
+      - PLEX_LISTEN_PORT=32400
+      - TAUTULLI_LISTEN_PORT=8181
+      - NZBGET_LISTEN_PORT=6789
+      - UMASK=022
+      - PUID=1000
+      - PGID=1000
+    image: mmxca/nginx-mc
+    volumes:
+      - "/opt/docker/media-center/docker/nginx:/run/nginx"
+      - "/opt/docker/media-center/docker/config/nginx:/etc/nginx"
+      - "/opt/docker/media-center/docker/nginx/logs:/var/log/nginx"
+    ports:
+      - "65456:65456"
+    restart: unless-stopped
+
 networks:
   kodi_server:
     ipam:
