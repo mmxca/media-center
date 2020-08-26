@@ -1,4 +1,4 @@
-version: '3.3'
+version: 3.3
 services:
 
   delugevpn:
@@ -8,18 +8,18 @@ services:
         aliases:
           - delugevpn
     ports:
-      - '8112:8112'
-      - '8118:8118'
-      - '58846:58846'
-      - '58946:58946'
-      - '8888:8888/tcp'
-      - '8388:8388/udp'
-      - '8000:8000/tcp'
+      - 8112:8112
+      - 8118:8118
+      - 58846:58846
+      - 58946:58946
+      - 8888:8888/tcp
+      - 8388:8388/udp
+      - 8000:8000/tcp
     container_name: delugevpn
     volumes:
-      - './docker/downloads:/downloads'
-      - './docker/config/deluge:/config'
-      - '/etc/localtime:/etc/localtime:ro'
+      - ./docker/downloads:/downloads
+      - ./docker/config/deluge:/config
+      - /etc/localtime:/etc/localtime:ro
     cap_add:
       - NET_ADMIN
     environment:
@@ -30,8 +30,7 @@ services:
       - STRICT_PORT_FORWARD=no
       - ENABLE_PRIVOXY=yes
       - LAN_NETWORK=10.0.0.0/8
-      - >-
-        NAME_SERVERS=209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177
+      - NAME_SERVERS=209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177
       - DELUGE_DAEMON_LOG_LEVEL=info
       - DELUGE_WEB_LOG_LEVEL=info
       - ADDITIONAL_PORTS=1234
@@ -51,10 +50,10 @@ services:
     image: mdhiggins/sonarr-sma
     container_name: sonarr
     volumes:
-      - './docker/config/sonarr:/config'
-      - './docker/sma:/usr/local/sma/config'
-      - './docker/media/tvshows:/tv'
-      - './docker/downloads:/downloads'
+      - ./docker/config/sonarr:/config
+      - ./docker/config/sma:/usr/local/sma/config
+      - ./docker/media/tvshows:/tv
+      - ./docker/downloads:/downloads
     restart: unless-stopped
     environment:
       - PUID=2000
@@ -62,7 +61,7 @@ services:
     depends_on:
       - delugevpn
     ports:
-      - '8989:8989'
+      - 8989:8989
 
   jackett:
     networks:
@@ -77,10 +76,10 @@ services:
       - TZ=America/Chicago
       - AUTO_UPDATE=true
     volumes:
-      - './docker/config/jackett:/config'
-      - './docker/downloads:/downloads'
+      - ./docker/config/jackett:/config/Jackett
+      - ./docker/downloads:/downloads
     ports:
-      - '9117:9117'
+      - 9117:9117
     restart: unless-stopped
     image: linuxserver/jackett
 
@@ -93,16 +92,16 @@ services:
     image: mdhiggins/radarr-sma
     container_name: radarr
     volumes:
-      - './docker/config/radarr:/config'
-      - './docker/sma:/usr/local/sma/config'
-      - './docker/media/movies:/movies'
-      - './docker/downloads:/downloads'
+      - ./docker/config/radarr:/config
+      - ./docker/config/sma:/usr/local/sma/config
+      - ./docker/media/movies:/movies
+      - ./docker/downloads:/downloads
     restart: unless-stopped
     environment:
       - PUID=2000
       - PGID=2000
     ports:
-      - '7878:7878'
+      - 7878:7878
 
   plex:
     networks:
@@ -113,14 +112,16 @@ services:
     container_name: plex
     hostname: plex
     ports:
-      - '32400:32400'
+      - 32400:32400
     environment:
       - TZ=America/Chicago
       - PLEX_CLAIM=claim-By8WWAuZHfFjy7sNSsMh
+      - PUID=2000
+      - PGID=2000
     volumes:
-      - './docker/config/plex:/config'
-      - './docker/config/plex/transcode:/transcode'
-      - './docker/media:/data'
+      - ./docker/config/plex:/config
+      - ./docker/config/plex/transcode:/transcode
+      - ./docker/media:/data
       #- '/mnt/easystore/kodi/TV Shows:/tv'
       #- '/mnt/easystore/kodi/Movies:/movies'
       #- '/mnt/easystore/kodi/Cancelled:/cancelled'
@@ -136,23 +137,41 @@ services:
           - tautulli
     container_name: tautulli
     volumes:
-      - './docker/config/plexpy:/config'
-      - >-
-        ./docker/config/plex/Library/Application Support/Plex Media
-        Server/Logs:/logs:ro
+      - ./docker/config/plexpy:/config
+      - ./docker/config/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro
     environment:
       - PGID=2000
       - PUID=2000
       - TZ=<timezone>
     ports:
-      - '8181:8181'
+      - 8181:8181
     image: linuxserver/tautulli
     restart: unless-stopped
+
+  nzbget:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.70
+        aliases:
+          - nzbget
+    container_name: nzbget
+    environment:
+      - PUID=2000
+      - PGID=2000
+      - TZ=America/Chicago
+    image: linuxserver/nzbget
+    restart: unless-stopped
+    ports:
+      - 6789:6789
+    volumes:
+      - ./docker/config/nzbget/scripts:/app/nzbget/share/nzbget/scripts
+      - ./docker/config/nzbget:/config
+      - ./docker/downloads:/downloads
 
   nginx:
     networks:
       kodi_server:
-        ipv4_address: 192.168.2.70
+        ipv4_address: 192.168.2.250
         aliases:
           - nginx
     container_name: ngingx
@@ -163,7 +182,7 @@ services:
       - radarr
       - plex
       - tautulli
-        #      - nzbget
+      - nzbget
     environment:
       - NGINX_LISTEN_PORT=65456
       - DELUGEVPN_LISTEN_PORT=8112
@@ -174,15 +193,15 @@ services:
       - TAUTULLI_LISTEN_PORT=8181
       - NZBGET_LISTEN_PORT=6789
       - UMASK=022
-      - PUID=1000
-      - PGID=1000
+      - PUID=2000
+      - PGID=2000
     image: mmxca/nginx-mc
     volumes:
-      - "/opt/docker/media-center/docker/nginx:/run/nginx"
-      - "/opt/docker/media-center/docker/config/nginx:/etc/nginx"
-      - "/opt/docker/media-center/docker/nginx/logs:/var/log/nginx"
+      - /opt/docker/media-center/docker/nginx:/run/nginx
+      - /opt/docker/media-center/docker/config/nginx:/etc/nginx
+      - /opt/docker/media-center/docker/nginx/logs:/var/log/nginx
     ports:
-      - "65456:65456"
+      - 65456:65456
     restart: unless-stopped
 
 networks:
@@ -191,4 +210,3 @@ networks:
       driver: default
       config:
         - subnet: "192.168.2.0/24"
-
