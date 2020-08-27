@@ -204,6 +204,33 @@ services:
       - 65456:65456
     restart: unless-stopped
 
+  plexcleaner:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.90
+        aliases:
+          - plexcleaner
+    container_name: plexcleaner
+    image: mmxca/media-center-plexcleaner:beta
+    restart: unless-stopped
+    environment:
+      - PUID=2000
+      - PGID=2000
+      - TZ=America/Chicago
+      - PLEX_VIDEO_CLEANER_DAYS_TO_RETAIN=1
+      - PLEX_VIDEO_CLEANER_PERCENT_THRESHOLD=98
+      - PLEX_VIDEO_CLEANER_SLEEP=10
+      - PLEX_VIDEO_CLEANER_DEBUG=true
+      - PLEX_VIDEO_CLEANER_SHOWS=true
+      - PLEX_VIDEO_CLEANER_MOVIES=false
+      - PLEX_VIDEO_CLEANER_BASEURL=http://plex:32400
+      - PLEX_VIDEO_CLEANER_TOKEN=s7-vJyb8e_nj57VyyFqb
+      #- PLEX_VIDEO_CLEANER_USERNAME=
+      #- PLEX_VIDEO_CLEANER_PASSWORD=
+    volumes:
+      - /home/dhoffman/docker/logs/plexcleaner:/logs
+
+
 networks:
   kodi_server:
     ipam:
