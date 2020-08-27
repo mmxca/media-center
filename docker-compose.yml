@@ -138,7 +138,7 @@ services:
     container_name: tautulli
     volumes:
       - ./docker/config/plexpy:/config
-      - ./docker/config/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro
+      - ./docker/logs/plex:/logs:ro
     environment:
       - PGID=2000
       - PUID=2000
@@ -197,9 +197,9 @@ services:
       - PGID=2000
     image: mmxca/nginx-mc
     volumes:
-      - /opt/docker/media-center/docker/nginx:/run/nginx
-      - /opt/docker/media-center/docker/config/nginx:/etc/nginx
-      - /opt/docker/media-center/docker/nginx/logs:/var/log/nginx
+      - ./docker/nginx:/run/nginx
+      - ./docker/config/nginx:/etc/nginx
+      - ./docker/logs/nginx:/var/log/nginx
     ports:
       - 65456:65456
     restart: unless-stopped
@@ -211,7 +211,7 @@ services:
         aliases:
           - plexcleaner
     container_name: plexcleaner
-    image: mmxca/media-center-plexcleaner:beta
+    image: mmxca/media-center-plexcleaner:latest
     restart: unless-stopped
     environment:
       - PUID=2000
@@ -229,7 +229,6 @@ services:
       #- PLEX_VIDEO_CLEANER_PASSWORD=
     volumes:
       - /home/dhoffman/docker/logs/plexcleaner:/logs
-
 
 networks:
   kodi_server:
