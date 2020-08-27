@@ -1,4 +1,4 @@
-version: 3.3
+version: "3.3"
 services:
 
   delugevpn:
@@ -138,7 +138,7 @@ services:
     container_name: tautulli
     volumes:
       - ./docker/config/plexpy:/config
-      - ./docker/logs/plex:/logs:ro
+      - ./docker/logs/plexpy:/logs:ro
     environment:
       - PGID=2000
       - PUID=2000
@@ -228,7 +228,7 @@ services:
       #- PLEX_VIDEO_CLEANER_USERNAME=
       #- PLEX_VIDEO_CLEANER_PASSWORD=
     volumes:
-      - /home/dhoffman/docker/logs/plexcleaner:/logs
+      - ./docker/logs/plexcleaner:/logs
 
 networks:
   kodi_server:
