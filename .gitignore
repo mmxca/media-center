@@ -6,6 +6,7 @@ cache
 Library
 state
 backups
+Backups
 
 *.torrent
 *.bak
