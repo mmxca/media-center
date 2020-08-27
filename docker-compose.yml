@@ -1,4 +1,4 @@
-version: "3.3"
+version: 3.3
 services:
 
   delugevpn:
@@ -22,22 +22,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     cap_add:
       - NET_ADMIN
-    environment:
-      - VPN_ENABLED=yes
-      - VPN_USER=x6920908
-      - VPN_PASS=pUgjTruKvg
-      - VPN_PROV=pia
-      - STRICT_PORT_FORWARD=no
-      - ENABLE_PRIVOXY=yes
-      - LAN_NETWORK=10.0.0.0/8
-      - NAME_SERVERS=209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177
-      - DELUGE_DAEMON_LOG_LEVEL=info
-      - DELUGE_WEB_LOG_LEVEL=info
-      - ADDITIONAL_PORTS=1234
-      - DEBUG=false
-      - UMASK=022
-      - PUID=2000
-      - PGID=2000
+    env_file:
+      - environment_variables
     image: binhex/arch-delugevpn
     restart: unless-stopped
 
@@ -55,9 +41,8 @@ services:
       - ./docker/media/tvshows:/tv
       - ./docker/downloads:/downloads
     restart: unless-stopped
-    environment:
-      - PUID=2000
-      - PGID=2000
+    env_file:
+      - environment_variables
     depends_on:
       - delugevpn
     ports:
@@ -70,11 +55,8 @@ services:
         aliases:
           - jackett
     container_name: jackett
-    environment:
-      - PUID=2000
-      - PGID=2000
-      - TZ=America/Chicago
-      - AUTO_UPDATE=true
+    env_file:
+      - environment_variables
     volumes:
       - ./docker/config/jackett:/config/Jackett
       - ./docker/downloads:/downloads
@@ -97,9 +79,8 @@ services:
       - ./docker/media/movies:/movies
       - ./docker/downloads:/downloads
     restart: unless-stopped
-    environment:
-      - PUID=2000
-      - PGID=2000
+    env_file:
+      - environment_variables
     ports:
       - 7878:7878
 
@@ -113,11 +94,8 @@ services:
     hostname: plex
     ports:
       - 32400:32400
-    environment:
-      - TZ=America/Chicago
-      - PLEX_CLAIM=claim-By8WWAuZHfFjy7sNSsMh
-      - PUID=2000
-      - PGID=2000
+    env_file:
+      - environment_variables
     volumes:
       - ./docker/config/plex:/config
       - ./docker/config/plex/transcode:/transcode
@@ -138,11 +116,9 @@ services:
     container_name: tautulli
     volumes:
       - ./docker/config/plexpy:/config
-      - ./docker/logs/plexpy:/logs:ro
-    environment:
-      - PGID=2000
-      - PUID=2000
-      - TZ=<timezone>
+      - ./docker/logs/plex:/logs:ro
+    env_file:
+      - environment_variables
     ports:
       - 8181:8181
     image: linuxserver/tautulli
@@ -155,10 +131,8 @@ services:
         aliases:
           - nzbget
     container_name: nzbget
-    environment:
-      - PUID=2000
-      - PGID=2000
-      - TZ=America/Chicago
+    env_file:
+      - environment_variables
     image: linuxserver/nzbget
     restart: unless-stopped
     ports:
@@ -183,18 +157,8 @@ services:
       - plex
       - tautulli
       - nzbget
-    environment:
-      - NGINX_LISTEN_PORT=65456
-      - DELUGEVPN_LISTEN_PORT=8112
-      - SONARR_LISTEN_PORT=8989
-      - JACKETT_LISTEN_PORT=9117
-      - RADARR_LISTEN_PORT=7878
-      - PLEX_LISTEN_PORT=32400
-      - TAUTULLI_LISTEN_PORT=8181
-      - NZBGET_LISTEN_PORT=6789
-      - UMASK=022
-      - PUID=2000
-      - PGID=2000
+    env_file:
+      - environment_variables
     image: mmxca/nginx-mc
     volumes:
       - ./docker/nginx:/run/nginx
@@ -207,28 +171,16 @@ services:
   plexcleaner:
     networks:
       kodi_server:
-        ipv4_address: 192.168.2.90
+        ipv4_address: 192.168.2.80
         aliases:
           - plexcleaner
     container_name: plexcleaner
     image: mmxca/media-center-plexcleaner:latest
     restart: unless-stopped
-    environment:
-      - PUID=2000
-      - PGID=2000
-      - TZ=America/Chicago
-      - PLEX_VIDEO_CLEANER_DAYS_TO_RETAIN=1
-      - PLEX_VIDEO_CLEANER_PERCENT_THRESHOLD=98
-      - PLEX_VIDEO_CLEANER_SLEEP=10
-      - PLEX_VIDEO_CLEANER_DEBUG=true
-      - PLEX_VIDEO_CLEANER_SHOWS=true
-      - PLEX_VIDEO_CLEANER_MOVIES=false
-      - PLEX_VIDEO_CLEANER_BASEURL=http://plex:32400
-      - PLEX_VIDEO_CLEANER_TOKEN=s7-vJyb8e_nj57VyyFqb
-      #- PLEX_VIDEO_CLEANER_USERNAME=
-      #- PLEX_VIDEO_CLEANER_PASSWORD=
+    env_file:
+      - environment_variables
     volumes:
-      - ./docker/logs/plexcleaner:/logs
+      - /home/dhoffman/docker/logs/plexcleaner:/logs
 
 networks:
   kodi_server:
