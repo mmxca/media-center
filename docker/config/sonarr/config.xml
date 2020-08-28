@@ -6,7 +6,7 @@
   <SslPort>9898</SslPort>
   <EnableSsl>False</EnableSsl>
   <ApiKey>ea10325f9dda414487e5cb08a6811c81</ApiKey>
-  <AuthenticationMethod>Forms</AuthenticationMethod>
+  <AuthenticationMethod>None</AuthenticationMethod>
   <Branch>master</Branch>
   <LaunchBrowser>True</LaunchBrowser>
   <SslCertHash></SslCertHash>

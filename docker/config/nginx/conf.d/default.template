@@ -18,6 +18,8 @@ server {
     proxy_pass http://delugevpn:${DELUGEVPN_LISTEN_PORT}/;
     proxy_set_header X-Deluge-Base "/deluge/";
     add_header X-Frame-Options SAMEORIGIN;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }  
 
   location /sonarr {
@@ -26,6 +28,8 @@ server {
     proxy_set_header  X-Real-IP $remote_addr;
     proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header  X-Forwarded-Proto $scheme;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   location /radarr {
@@ -34,23 +38,33 @@ server {
     proxy_set_header  X-Real-IP $remote_addr;
     proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header  X-Forwarded-Proto $scheme;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
 location /web/ {
     proxy_pass http://plex:${PLEX_LISTEN_PORT}/web/;
     proxy_max_temp_file_size 0;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
 }
 
   location /jackett {
     proxy_pass http://jackett:${JACKETT_LISTEN_PORT}/jackett/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   location /tautulli/ {
     proxy_pass http://tautulli:${TAUTULLI_LISTEN_PORT}/tautulli/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   location /nzbget {
     proxy_pass http://nzbget:${NZBGET_LISTEN_PORT}/nzbget/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   location ~ ^/nzbget($|./*) {
@@ -59,10 +73,14 @@ location /web/ {
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   location ~ ^/nzbget$ {
     return 302 $scheme://$host$request_uri/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
 }
