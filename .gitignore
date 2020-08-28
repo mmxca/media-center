@@ -24,3 +24,4 @@ state-*
 *.db*
 .htpasswd
 docker/config/nginx/conf.d/default.conf
+.bash*
