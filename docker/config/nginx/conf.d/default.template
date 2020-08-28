@@ -5,6 +5,8 @@ server {
   # Everything is a 404
   location / {
     root /var/lib/nginx/html/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
   }
 
   # You may need this to prevent return 404 recursion.
@@ -47,20 +49,20 @@ location /web/ {
     proxy_pass http://tautulli:${TAUTULLI_LISTEN_PORT}/tautulli/;
   }
 
-#  location /nzbget {
-#    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT}/nzbget/;
-#  }
+  location /nzbget {
+    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT}/nzbget/;
+  }
 
-#  location ~ ^/nzbget($|./*) {
-#    rewrite /nzbget/(.*) /$1 break;
-#    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT};
-#    proxy_set_header Host $host;
-#    proxy_set_header X-Real-IP $remote_addr;
-#    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#  }
+  location ~ ^/nzbget($|./*) {
+    rewrite /nzbget/(.*) /$1 break;
+    proxy_pass http://nzbget:${NZBGET_LISTEN_PORT};
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
 
-#  location ~ ^/nzbget$ {
-#    return 302 $scheme://$host$request_uri/;
-#  }
+  location ~ ^/nzbget$ {
+    return 302 $scheme://$host$request_uri/;
+  }
 
 }
