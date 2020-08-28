@@ -49,8 +49,15 @@ location /web/ {
     auth_basic_user_file /etc/nginx/.htpasswd;
 }
 
-  location /jackett {
-    proxy_pass http://jackett:${JACKETT_LISTEN_PORT}/jackett/;
+  location /jackett/ {
+    proxy_pass http://jackett:${JACKETT_LISTEN_PORT};
+    proxy_http_version 1.1;
+    proxy_set_header   Upgrade $http_upgrade;
+    proxy_set_header   Connection keep-alive;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Proto $scheme;
+    proxy_set_header   X-Forwarded-Host $http_host;
     auth_basic "Restricted Content";
     auth_basic_user_file /etc/nginx/.htpasswd;
   }

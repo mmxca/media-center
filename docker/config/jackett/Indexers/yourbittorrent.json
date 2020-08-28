@@ -3,18 +3,18 @@
     "id": "sitelink",
     "type": "inputstring",
     "name": "Site Link",
-    "value": "https://eztv.io/"
+    "value": "https://yourbittorrent.com/"
   },
   {
     "id": "cookieheader",
     "type": "hiddendata",
     "name": "CookieHeader",
-    "value": "__cfduid=da11507c56d998e988e4c00757f6ab7f81598645979; PHPSESSID=jrp8hipk54db1pd8dbh2493f06"
+    "value": ""
   },
   {
     "id": "lasterror",
     "type": "hiddendata",
     "name": "LastError",
-    "value": null
+    "value": ""
   }
 ]
