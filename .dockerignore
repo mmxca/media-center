@@ -1,0 +1,43 @@
+# for all code you usually don't want .git history in image, just the current commit you have checked out
+.git
+
+# you usually don't want dockerfile and compose files in the image either (to not lost caches on not significant changes)
+*Dockerfile*
+*docker-compose*
+.dockerignore
+
+# Local gems (there should be separate `bundle install` step in Dockerfile)
+vendor/bundle/
+
+# Specs or tests (may contain large fixtures)
+spec/
+
+# Keys for Rails credentials (they should be mounted into container from outside)
+config/master.key
+config/credentials/*.key
+
+# CI configuration
+.circleci/
+.github/
+
+# Backend dev tools
+.rspec_status
+.rubocop*
+.bundle/
+
+# running application artifacts
+log/
+tmp/
+public/system/
+public/storage/
+public/uploads/
+
+# Frontend
+public/packs*
+node_modules/
+
+# Developer-specific things. So bad that there is no global .dockerignore. See https://github.com/moby/moby/issues/12843
+/.idea/
+
+docker
+
