@@ -125,6 +125,9 @@ services:
     restart: unless-stopped
 
   nzbget:
+    build:
+      context: .
+      dockerfile: NzbGet.Dockerfile
     networks:
       kodi_server:
         ipv4_address: 192.168.2.70
