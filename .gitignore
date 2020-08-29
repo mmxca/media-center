@@ -25,3 +25,5 @@ state-*
 .htpasswd
 docker/config/nginx/conf.d/default.conf
 .bash*
+docker/config/nzbget/scripts/__pycache__/
+docker/config/plexpy/logs/
