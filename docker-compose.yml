@@ -146,6 +146,8 @@ services:
       - ./docker/downloads:/downloads
 
   nginx:
+    build:
+      context: nginx
     networks:
       kodi_server:
         ipv4_address: 192.168.2.250
@@ -162,10 +164,11 @@ services:
       - nzbget
     env_file:
       - environment_variables
-    image: mmxca/nginx-mc
+    image: mmxca/nginx:custom
     volumes:
       - ./docker/nginx:/run/nginx
       - ./docker/config/nginx:/etc/nginx
+      - ./docker/config/nginx/certbot:/etc/letsencrypt
       - ./docker/logs/nginx:/var/log/nginx
     ports:
       - 65456:65456
