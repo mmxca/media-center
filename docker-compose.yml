@@ -172,6 +172,7 @@ services:
       - ./docker/logs/nginx:/var/log/nginx
     ports:
       - 65456:65456
+      - 443:443
     restart: unless-stopped
 
   # plexcleaner:

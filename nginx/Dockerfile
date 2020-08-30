@@ -9,8 +9,8 @@ RUN  apk add nginx gettext py3-pip \
   # Workaround start - https://github.com/pyca/cryptography/issues/4264
   && apk del libressl-dev \
   && apk add openssl-dev \
-  && pip install cryptography==3.0 \ 
-  #2.2.2  
+  && pip install cryptography \ 
+  #==2.2.2  
   && apk del openssl-dev \
   && apk add libressl-dev \
   # Workaround end
@@ -21,5 +21,6 @@ RUN  apk add nginx gettext py3-pip \
   && rm -vrf /var/cache/apk/*
 
 EXPOSE 65456/tcp
+EXPOSE 443/tcp
 
 CMD /usr/bin/nginx.sh
