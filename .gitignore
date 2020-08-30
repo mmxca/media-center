@@ -9,7 +9,7 @@ backups
 Backups
 xdg
 environment_variables
-
+certbot
 
 *.torrent
 *.bak

@@ -19,7 +19,7 @@ services:
     volumes:
       - ./docker/downloads:/downloads
       - ./docker/config/deluge:/config
-      - /etc/localtime:/etc/localtime:ro
+      # - /etc/localtime:/etc/localtime:ro
     cap_add:
       - NET_ADMIN
     env_file:
@@ -146,6 +146,8 @@ services:
       - ./docker/downloads:/downloads
 
   nginx:
+    build:
+      context: nginx
     networks:
       kodi_server:
         ipv4_address: 192.168.2.250
@@ -162,28 +164,30 @@ services:
       - nzbget
     env_file:
       - environment_variables
-    image: mmxca/nginx-mc
+    image: mmxca/nginx:custom
     volumes:
       - ./docker/nginx:/run/nginx
       - ./docker/config/nginx:/etc/nginx
+      - ./docker/config/nginx/certbot:/etc/letsencrypt
       - ./docker/logs/nginx:/var/log/nginx
     ports:
       - 65456:65456
+      - 443:443
     restart: unless-stopped
 
-  plexcleaner:
-    networks:
-      kodi_server:
-        ipv4_address: 192.168.2.80
-        aliases:
-          - plexcleaner
-    container_name: plexcleaner
-    image: mmxca/media-center-plexcleaner:latest
-    restart: unless-stopped
-    env_file:
-      - environment_variables
-    volumes:
-      - /home/dhoffman/docker/logs/plexcleaner:/logs
+  # plexcleaner:
+  #   networks:
+  #     kodi_server:
+  #       ipv4_address: 192.168.2.80
+  #       aliases:
+  #         - plexcleaner
+  #   container_name: plexcleaner
+  #   image: mmxca/media-center-plexcleaner:latest
+  #   restart: unless-stopped
+  #   env_file:
+  #     - environment_variables
+  #   volumes:
+  #     - /home/dhoffman/docker/logs/plexcleaner:/logs
 
 networks:
   kodi_server:
