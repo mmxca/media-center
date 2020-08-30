@@ -1,10 +1,25 @@
 FROM alpine:latest
 
-RUN apk add nginx gettext certbot
-
 COPY ./default.template /etc/nginx/conf.d/default.template
 COPY ./nginx.sh /usr/bin/nginx.sh
 
+RUN  apk add nginx gettext py3-pip \
+  # Temporary 
+  && apk add gcc musl-dev python3-dev libffi-dev \
+  # Workaround start - https://github.com/pyca/cryptography/issues/4264
+  && apk del libressl-dev \
+  && apk add openssl-dev \
+  && pip install cryptography==3.0 \ 
+  #2.2.2  
+  && apk del openssl-dev \
+  && apk add libressl-dev \
+  # Workaround end
+  && chmod 755 /usr/bin/nginx.sh \
+  && pip install certbot-dns-nsone \
+  # Undo Temporary 
+  && apk del gcc musl-dev python3-dev libffi-dev \
+  && rm -vrf /var/cache/apk/*
+
 EXPOSE 65456/tcp
 
-CMD sh -c "envsubst \"`env | awk -F = '{printf \" \\\\$%s\", $1}'`\" < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+CMD /usr/bin/nginx.sh
