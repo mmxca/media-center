@@ -24,7 +24,7 @@ services:
       - NET_ADMIN
     env_file:
       - environment_variables
-    image: binhex/arch-delugevpn
+    image: binhex/arch-delugevpn:latest
     restart: unless-stopped
 
   sonarr:
@@ -33,7 +33,7 @@ services:
         ipv4_address: 192.168.2.20
         aliases:
           - sonarr
-    image: mdhiggins/sonarr-sma
+    image: mdhiggins/sonarr-sma:develop
     container_name: sonarr
     volumes:
       - ./docker/config/sonarr:/config
@@ -62,6 +62,8 @@ services:
       - ./docker/downloads:/downloads
     ports:
       - 9117:9117
+    depends_on:
+      - delugevpn
     restart: unless-stopped
     image: linuxserver/jackett
 
@@ -77,8 +79,12 @@ services:
       - ./docker/config/radarr:/config
       - ./docker/config/sma:/usr/local/sma/config
       - ./docker/media/movies:/movies
+      - ./docker/media/christmas:/christmas
+      - ./docker/media/christmas2021:/christmas2021
       - ./docker/downloads:/downloads
     restart: unless-stopped
+    depends_on:
+      - delugevpn
     env_file:
       - environment_variables
     ports:
@@ -104,7 +110,10 @@ services:
       #- '/mnt/easystore/kodi/Movies:/movies'
       #- '/mnt/easystore/kodi/Cancelled:/cancelled'
       #- '/mnt/easystore/kodi/Old:/old'
+    devices:
+      - /dev/dri:/dev/dri
     image: plexinc/pms-docker
+    #image: mmxca/docker-pms:cuda
     restart: unless-stopped
 
   tautulli:
@@ -121,6 +130,8 @@ services:
       - environment_variables
     ports:
       - 8181:8181
+    depends_on:
+      - plex
     image: linuxserver/tautulli
     restart: unless-stopped
 
@@ -162,6 +173,7 @@ services:
       - plex
       - tautulli
       - nzbget
+      - readarr
     env_file:
       - environment_variables
     image: mmxca/nginx:custom
@@ -172,7 +184,7 @@ services:
       - ./docker/logs/nginx:/var/log/nginx
     ports:
       - 65456:65456
-      - 443:443
+      - 10443:443
     restart: unless-stopped
 
   plexcleaner:
@@ -187,7 +199,28 @@ services:
     env_file:
       - environment_variables
     volumes:
-      - /home/dhoffman/docker/logs/plexcleaner:/logs
+      - ./docker/logs/plexcleaner:/logs
+
+  readarr:
+    networks:
+      kodi_server:
+        ipv4_address: 192.168.2.90
+        aliases:
+          - readarr
+    container_name: readarr
+    image: hotio/readarr:unstable
+    restart: unless-stopped
+    ports:
+      - 8787:8787
+    env_file:
+      - environment_variables
+    depends_on:
+      - delugevpn
+      - nzbget
+      - jackett
+    volumes:
+      - ./docker/config/readarr:/config
+      - ./docker/media/ebooks:/media
 
 networks:
   kodi_server:
